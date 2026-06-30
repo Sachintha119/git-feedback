@@ -1,7 +1,16 @@
-    # add a sample output
-    outputs:
-      example: ${{ steps.print-something.outputs.example }}
+# Testing Workflow
+
+name: Example
+
+on:
+  push:
+    branches: [ testing ]
+
+
+<!-- Print Somthing -->
+jobs:
+  example:
+    runs-on: ubuntu-latest
     steps:
-      - name: Print something
-        id: print-something
-        run: echo "example=Hello World" >> $GITHUB_OUTPUT
+      - name: Print
+        run: echo "Hello World"
