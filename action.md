@@ -166,5 +166,26 @@ jobs:
         env: 
           ENCRYPTION_KEY: ${{ secrets.ENCRYPTION_KEY }}
 
+<!-- zCreate a PR -->
+  create-pr:
+    runs-on: ubuntu-latest
+    needs: [integration-test , unit-test]
+    if: github.ref == 'refs/heads/testing'
+    steps:
+      - name: Create Pull Request
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.pulls.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: `[Test Workflow] Unit and integration tests completed successfully`,
+              head: 'testing',
+              base: 'release',
+              body: [
+                'This is an automated pull request created after successful unit and integration tests.',
+                ']
+            });
 
 
+<!-- Adding test summry to PR -->

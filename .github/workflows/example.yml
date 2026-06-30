@@ -132,7 +132,27 @@ jobs:
             const unitSummary = process.env.UNIT_SUMMARY;
             const integrationSummary = process.env.INTEGRATION_SUMMARY;
             
-            github.rest.pulls.create({
+            // List all open PRs to find if one already exists for testing -> release
+            const { data: openPrs } = await github.rest.pulls.list({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              base: 'release',
+              state: 'open'
+            });
+            
+            const existingPr = openPrs.find(pr => pr.head.ref === 'testing');
+            if (existingPr) {
+              console.log(`Closing existing PR #${existingPr.number} before creating a new one...`);
+              await github.rest.pulls.update({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                pull_number: existingPr.number,
+                state: 'closed'
+              });
+            }
+            
+            console.log('Creating new Pull Request...');
+            await github.rest.pulls.create({
               owner: context.repo.owner,
               repo: context.repo.repo,
               title: `[Test Workflow] Unit and integration tests completed successfully`,
