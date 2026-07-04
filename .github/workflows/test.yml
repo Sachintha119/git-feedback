@@ -1,0 +1,5 @@
+name: Example1
+
+on:
+  push:
+    branches: [main]
